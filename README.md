@@ -13,6 +13,8 @@ This is documentation for IQdata Android SDK. It allows you to send user data (l
 - [Installation](#installation)
     - [Step 1: Add JitPack repository](#step-1-add-jitpack-repository)
     - [Step 2. Add IQdata SDK](#step-2-add-iqdata-sdk)
+    - [Step 3. Add IQdata API key](#step-3-add-iqdata-api-key)
+    - [Step 4 (Optional). Choose collectors](#step-4-optional-choose-collectors)
 
 ### Requirements
 |Java|Android|Gradle|Gradle Android plugin|
@@ -101,5 +103,37 @@ Add api key in your `AndroidManifest.xml`
             android:value="YOUR_API_KEY" />
     </application>
 ```
+#### Step 4 (Optional). Choose collectors
 
+SDK collects information using all collectors by default.  
+If you want to use only some of it, then you should disable auto-initialization by adding in your `AndroidManifest.xml`
+```xml
+    <application>
+        …
+        <meta-data
+            android:name="ai.iqdata.AutoInitializeEnabled"
+            android:value="false" />
+    </application>
+```
+
+And manually initialize SDK in your application class
+```java
+public class App extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // We want to collect only cell data and location data
+        IQDataSDK.with(this, new CellCollector(), new LocationCollector());
+    }
+}
+``` 
 :heavy_check_mark: That's it, the IQData SDK will have been installed once the sync is completed.
+
+### Sending custom data
+```java
+Map<String, String> customData = new HashMap<>();
+customData.put("deviceToken", "TOKEN_VALUE");
+customData.put("externalId", "USER_ID");
+customData.put("someKey", "VALUE");
+IQDataSDK.getInstance().setCustomData(customData);
+```
